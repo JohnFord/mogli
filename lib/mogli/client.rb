@@ -21,6 +21,20 @@ module Mogli
       @default_params = @access_token ? {:access_token=>access_token} : {}
     end
     
+    def self.get_access_token_for_code_and_authenticator(code,authenticator)
+      post_data = get(authenticator.access_token_url(code))
+      parts = post_data.split("&")
+      hash = {}
+      parts.each do |p| (k,v) = p.split("=")
+        hash[k]=v
+      end
+      hash["access_token"]      
+    end
+    
+    def self.create_from_code_and_authenticator(code,authenticator)
+      new(get_access_token_for_code_and_authenticator(code,authenticator))
+    end
+    
     def get_and_map(path,klass=nil)
       data = self.class.get(api_path(path),:query=>default_params)
       map_data(data,klass)
@@ -37,7 +51,6 @@ module Mogli
       hash_or_array = map_to_class(hash_or_array,klass) if klass
       hash_or_array
     end
-    
     
     #protected
     
