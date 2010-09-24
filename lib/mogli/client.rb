@@ -1,5 +1,9 @@
+require "mogli/client/album"
+require "mogli/client/book"
 require "mogli/client/event"
+require "mogli/client/photo"
 require "mogli/client/user"
+require "mogli/client/video"
 
 module Mogli
   class Client
@@ -8,8 +12,12 @@ module Mogli
     attr_reader :expiration
 
     include HTTParty
+    include Mogli::Client::Album
+    include Mogli::Client::Book
     include Mogli::Client::Event
+    include Mogli::Client::Photo
     include Mogli::Client::User
+    include Mogli::Client::Video
     class UnrecognizeableClassError < Exception; end
 
     def api_path(path)
