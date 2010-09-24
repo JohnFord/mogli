@@ -1,6 +1,6 @@
 
-*) add scopes into authentication url stuff
-*) Add expiration time handling
+*) move all model related tests to model_spec.rb
+*) handle picture attributes
 *) allow embedding into other classes, example:
 
 class User < ActiveRecord::Base

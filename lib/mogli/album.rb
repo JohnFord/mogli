@@ -1,8 +1,8 @@
 module Mogli
-  class Album < Hashie::Dash
-    include Model
+  class Album < Model
     
     define_properties :id, :name, :description, :link, :count, :created_time, :updated_time
+    creation_properties :name, :message
     
     hash_populating_accessor :from, "User","Page"
     has_association :photos, "Photo"

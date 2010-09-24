@@ -11,22 +11,7 @@ describe Mogli::User do
     mock("client")
   end
   
-  it "allow setting the client" do
-    user = Mogli::User.new
-    user.client = "client"
-    user.client.should == "client"
-  end
-  
-  it "have an activities attribute which fetches when called" do
-    mock_client.should_receive(:get_and_map).with("/1/activities","Activity").and_return("activities")
-    user_1.activities.should == "activities"
-  end
-  
-  it "only fetch activities once" do
-    mock_client.should_receive(:get_and_map).once.with("/1/activities","Activity").and_return([])
-    user_1.activities
-    user_1.activities
-  end
+
   
   it "won't recognize pages" do
     Mogli::User.recognize?("id"=>1,"name"=>"bob","category"=>"fdhsjkfsd")
@@ -35,4 +20,25 @@ describe Mogli::User do
   it "will recognize itself" do
     Mogli::User.recognize?("id"=>1,"name"=>"bob")    
   end
+  
+  
+  describe "Finding" do
+    
+    it "finds optional fields for a user" do
+      Mogli::Client.should_receive(:get).with("https://graph.facebook.com/1",
+        :query=>{:fields => [:birthday, :gender]}).and_return({:id=>1, :birthday=>'09/15', :gender => 'male'})
+      user = Mogli::User.find(1, nil, :birthday, :gender)
+      user.birthday.should == '09/15'
+      user.gender.should == 'male'
+    end
+  
+    it "finds a user's friends with optional fields" do
+      mock_client.should_receive(:get_and_map).with(
+        "1/friends", "User", {:fields => [:birthday, :gender]}).and_return(
+        [Mogli::User.new(:id=>2, :birthday=>'09/15', :gender => 'male')])
+      friends = user_1.friends(:birthday, :gender)
+      friends.size.should == 1
+    end
+  end
+  
 end
